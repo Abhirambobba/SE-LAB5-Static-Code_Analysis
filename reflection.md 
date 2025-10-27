@@ -1,0 +1,22 @@
+1. Which issues were the easiest to fix, and which were the hardest? Why?
+-- The easiest fixes was definitely the simple ones that Pylint, Bandit, and Flake8 found. Removing the unused import logging  was just deleting one line. Same for the eval() line  that Bandit flagged as a security risk. The bare except was also pretty easy; the report basically told me what was wrong, so I just changed it to except KeyError  like the lab suggested.
+
+--The hardest one for me was the dangerous-default-value (logs=[]). I had to actualy stop and think about why it was a problem (that the list is shared across calls). It wasn't just a typo, I had to change the logic of the function to use logs=None and then create a new list inside. Renaming all the functions from camelCase to snake_case  was'nt hard, but it was just annoying because I had to find all the places they were called and change them all.
+
+
+2. Did the static analysis tools report any false positives? If so, describe one example.
+--Honestly, I didn't really find any false positives in this lab. All the stuff the tools reported was actualy in the code. For example, Pylint warned about Using the global statement , which is true, the loadData function uses global stock_data. So it's not a false positive, it's just pointing out a design choice that could be better. Same for the line too long errors from Flake8, my lines were in fact too long after I added comments, so the tool was correct.
+
+
+3. How would you integrate static analysis tools into your actual software development workflow?
+--  I would definately use these tools in my workflow.
+  -->Local Development: I'd try to run them right in my terminal before I git commit my code. It seems like you could even set up a pre-commit hook so it's automatic. This would catch all the style and simple bugs imediately.
+  -->Continuous Integration (CI): This seems like the most powerful way. I'd set it up in GitHub Actions so that when anyone makes a pull request, a job automatically runs pylint, bandit, and flake8. If any of them fail (like if Bandit finds a high-severity issue ), the pull request should be blocked from merging until the developer fixes it. This seems like the best way to keep the main branch clean.
+
+
+
+4.What tangible improvements did you observe in the code quality, readability, or potential robustness after applying the fixes?
+--The improvements were really obvious.
+  -->Readability: The code quality and readability is just way better. Using snake_case for functions and f-strings  makes it look cleaner and more professional. Adding docstrings also makes it much clearer what each function is supposed to do.
+
+  -->Robustness: This was the biggest improvement. Getting rid of the eval() call fixed a major security hole. Fixing the mutable default argument bug (logs=[])  means the add_item function will actually work right now and not share logs between calls. Also, changing the bare except to except KeyError  makes the code safer. It wont accidentaly catch other errors that I should know about. And adding the try...except for FileNotFoundError in load_data means the program doesn't crash if the inventory.json file doesn't exist yet, which is way more robust.
